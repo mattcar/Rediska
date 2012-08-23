@@ -695,7 +695,14 @@ class Rediska_Zend_Cache_Backend_Redis extends Zend_Cache_Backend implements Zen
                     strlen(Rediska_Transaction::TRANSACTION_PREAMBLE)
                 );
                 if (Rediska_Transaction::TRANSACTION_PREAMBLE == $preamble){
-                    $result = array_merge($result, $transaction->execute());
+                    try{
+                        $result = array_merge($result, $transaction->execute());
+                    } catch (Rediska_Transaction_AbortedException $e){
+                        $this->_log(
+                            $e->getMessage() . (string) $transaction,
+                            Zend_Log::ERR
+                        );
+                    }
                 } else {
                     $transaction->discard();
                 }
