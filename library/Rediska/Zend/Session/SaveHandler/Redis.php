@@ -120,7 +120,9 @@ class Rediska_Zend_Session_SaveHandler_Redis extends Rediska_Options_RediskaInst
      */
     public function read($id)
     {
-        return $this->getRediska()->get($this->_getKeyName($id));
+        $sess = $this->getRediska()->get($this->_getKeyName($id));
+
+        return $sess ? $sess : '';
     }
 
     /**
@@ -159,8 +161,9 @@ class Rediska_Zend_Session_SaveHandler_Redis extends Rediska_Options_RediskaInst
         } catch(Rediska_Connection_Exec_Exception $e) {
             $this->_deleteSetOrThrowException($e);
         }
+        $sess = $this->getRediska()->delete($this->_getKeyName($id));
 
-        return $this->getRediska()->delete($this->_getKeyName($id));
+        return true;
     }
 
     /**
